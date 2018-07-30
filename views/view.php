@@ -13,23 +13,8 @@ $widget = $this->context;
 $attribute = $widget->attribute;
 ?>
 
-    <div class="dropdown-tree-container"<?= ( isset( $widget->id ) && $widget->id != "" ? "id=\"".$widget->id."\"" : ""); ?>>
-        <?= ( is_string( $widget->label ) ? "<label>".$widget->label."</label>" : "") ?>
-        <div class="form-control tree-input">
-            <div class="icon">
-                <span class="input-clear fa fa-times-circle hide"></span>
-                <span class="caret"></span>
-            </div>
-            <?php
-                if ( $widget->multiSelect ) {
-
-                    ?><ul><li class="empty">&nbsp;</li></ul><?php
-                } else {
-                    ?><span>&nbsp;</span><?php
-                }
-            ?>
-        </div>
-        <div class="tree-dropdown dropdown-menu" role="menu">
+    <div class="tree-list-container"<?= ( isset( $widget->id ) && $widget->id != "" ? "id=\"".$widget->id."\"" : ""); ?>>
+        <div class="tree-list">
             <?php
             if ( is_array( $widget->searchPanel ) && isset( $widget->searchPanel['visible'] ) && $widget->searchPanel['visible'] ) {
                 ?>
@@ -72,6 +57,19 @@ $attribute = $widget->attribute;
                     }
                 ?>
             </div>
+            <div class="form-control tree-input">
+                <div class="icon">
+                    <span class="input-clear fa fa-times-circle hide"></span>
+                </div>
+                <?php
+                if ( $widget->multiSelect ) {
+
+                    ?><ul><li class="empty">&nbsp;</li></ul><?php
+                } else {
+                    ?><span>&nbsp;</span><?php
+                }
+                ?>
+            </div>
         </div>
         <?php
         if ( $widget->form !== null && ( $widget->form instanceof \yii\widgets\ActiveForm ) &&
@@ -82,20 +80,11 @@ $attribute = $widget->attribute;
     </div>
 
 <?php
-$id = ( isset( $widget->id ) && $widget->id != "" ? "#".$widget->id : ".dropdown-tree-container");
+$id = ( isset( $widget->id ) && $widget->id != "" ? "#".$widget->id : ".tree-list-container");
 $js = "
 $(document).ready(function() {
     $('".$id." .tree ul li .node i.fa-plus-square-o').each(function(){
         $(this).parent().parent().children('ul').children('li').hide();
-    });
-    $('".$id." .tree-input').on('click', function(){
-        if ( !$(this).children('.icon').children('.caret').hasClass('up') ) {
-            $(this).children('.icon').children('.caret').addClass('up');
-            $(this).parent().children('.tree-dropdown').addClass('open');
-        } else {
-            $(this).children('.icon').children('.caret').removeClass('up');
-            $(this).parent().children('.tree-dropdown').removeClass('open');
-        }
     });
     $('" . $id . " .tree-header .search-clear').on('click', function(){
         $('" . $id . " input[name=search-input]').val('');
@@ -113,7 +102,7 @@ $(document).ready(function() {
             });
          } else {
             $('" . $id . " .tree ul li.hide').removeClass('hide');
-         }   
+         }
     });
     $('" . $id . " .tree-header input[name=search-input]').on('paste', function(){
         $('" . $id . " .tree ul li .node:not(.root) span:not(:contains( \$this.val() ))').parent().parent().addClass('hide');
@@ -134,7 +123,7 @@ $(document).ready(function() {
         $('" . $id . " > .form-group input[type=hidden]:eq(0)').val('');
         $('" . $id . " .tree-input .icon .input-clear').addClass('hide');
     });
-    
+
     $('body').on('click', '".$id." .tree ul li .node i',function(){
         if ( $(this).hasClass('fa-minus-square-o') ) {";
 //Collapse Node Event Ajax Request
@@ -215,8 +204,8 @@ if ( $widget->ajax !== null && is_array( $widget->ajax ) && isset( $widget->ajax
                                        '           <i class=\"fa fa-'+( typeof( data[i].items ) != 'undefined' ? 'plus' : 'minus' )+'-square-o\"></i>'+
                                        ". ( $widget->multiSelect ? "'           <i class=\"fa fa-square-o\"></i>'+" : "" )."
                                        '           <span data-id=\"'+data[i].id+'\">'+data[i].label+'</span>'+
-                                       '       </div>'+               
-                                       '    </li>';           
+                                       '       </div>'+
+                                       '    </li>';
                             if ( i == data.length - 1  ) {
                                 \$str += '</ul>';
                             }
@@ -225,7 +214,7 @@ if ( $widget->ajax !== null && is_array( $widget->ajax ) && isset( $widget->ajax
                         \$node.parent().parent().append( \$str );
                         \$node.parent().parent().children('ul').children('li').show();
                         \$node.removeClass('fa-spinner').addClass('fa-minus-square-o');
-                    } else { \$node.remove();  }                
+                    } else { \$node.remove();  }
                 },
                 datatype: 'json',
                 async: true
@@ -255,7 +244,7 @@ if ( $widget->multiSelect ) {
                 $('" . $id . " > .form-group input[type=hidden]:last-child').remove();
             } else {
                 $('" . $id . " > .form-group input[type=hidden]:eq(0)').val('');
-            } 
+            }
         } else if ( $(this).hasClass('fa-square-o') ) {
             $(this).removeClass('fa-square-o').addClass('fa-check-square-o');
             $('" . $id . " .tree-input ul li.empty').remove();
@@ -263,7 +252,7 @@ if ( $widget->multiSelect ) {
             $(this).next('span').addClass('selected');
             if ( $('" . $id . " > .form-group input[type=hidden]').length != 0 ) {
                 if ( $('" . $id . " > .form-group input[type=hidden]:eq(0)').val() != '' ) {
-                
+
                     $('" . $id . " > .form-group input[type=hidden]:eq(0)').clone().appendTo('" . $id . " > .form-group');
                     $('" . $id . " > .form-group input[type=hidden]:last-child').val( $(this).next('span').attr('data-id') );
                 } else {
@@ -271,18 +260,28 @@ if ( $widget->multiSelect ) {
                 }
             }
             $('" . $id . " .tree-input .icon .input-clear').removeClass('hide');
-        }
-    });    
+        }";
+    if ( isset( $widget->onItemSelect ) && $widget->onItemSelect !== null ) {
+        $js .= "
+        var \$itemSelectCallbackFunc = ".$widget->onItemSelect.";
+        \$itemSelectCallbackFunc(\$(this).next('span'));";
+    }
+    $js .="
+    });
 ";
 } else {
-    $js .= "});    
+    $js .= "});
     $('body').on('click', '" . $id . " .tree ul li .node:not(.root) > span', function(){
         $('" . $id . " > .form-group input[type=hidden]:eq(0)').val( $(this).attr('data-id') );
         $('" . $id . " .tree-input > span').html( $(this).html() );
+        $('" . $id . " .tree ul li .node:not(.root) > span').removeClass('selected');
         $(this).addClass('selected');
-        $('" . $id . " .tree-input .icon .input-clear').removeClass('hide');
-        $('" . $id . " .tree-input').click();
-        
+        $('" . $id . " .tree-input .icon .input-clear').removeClass('hide');";
+    if ( isset( $widget->onItemSelect ) && $widget->onItemSelect !== null ) {
+        $js .= "var \$itemSelectCallbackFunc = ".$widget->onItemSelect.";
+                    \$itemSelectCallbackFunc(\$this);";
+    }
+    $js .="
     });
     ";
 }
@@ -291,19 +290,17 @@ if ( $widget->expand ) {
 }
 if ( $widget->form !== null && ( $widget->form instanceof \yii\widgets\ActiveForm ) ) {
     $js .= "$('#" . $widget->form->id . "').on('beforeValidate', function(){
-        if ( $('" . $id . " .tree-dropdown').hasClass('open') ) { 
+        if ( $('" . $id . " .tree-dropdown').hasClass('open') ) {
             $('" . $id . " .tree-input').click();
         };
     });
     $('#" . $widget->form->id . "').on('afterValidate', function(event, messages){
-        //var attributes = $(this).data().yiiActiveForm.attributes;
-        //var settings = $(this).data().yiiActiveForm.settings;
         if ( $('" . $id . " > .form-group .help-block').html() != '' ) {
             $('" . $id . " > label').addClass('has-error');
             $('" . $id . " .tree-input').addClass('has-error');
-        } else { 
+        } else {
             $('" . $id . " > label').removeClass('has-error').addClass('has-success');
-            $('" . $id . " .tree-input').removeClass('has-error').addClass('has-success'); 
+            $('" . $id . " .tree-input').removeClass('has-error').addClass('has-success');
         }
     });
     ";

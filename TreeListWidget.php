@@ -7,7 +7,7 @@ class TreeListWidget extends \yii\base\Widget
     public $model = null; //model
     public $attribute = null; //model attribute
     public $multiSelect = 'auto'; //true, false or 'auto'
-    public $searchPanel = [ 'visible' => false, 
+    public $searchPanel = [ 'visible' => false,
                             'label' => '', //text before search input 
                             'placeholder' => '',  //serch input placeholder text
                             'searchCaseSensivity' => false 
@@ -51,12 +51,27 @@ class TreeListWidget extends \yii\base\Widget
     //                      ... see OnExpand, but the returned data will not be processed, only send ajax request
     //                  ],
     //]
-    public $label = false; //label of dropdown
+    public $onItemSelect = null; //javascript callback function that will be runned when tree item selected
+    //  'onItemSelect' => '', //javascript callback function that will be runned when tree item selected
+    //    function(item) {
+    //       console.log( item ); //selected item object
+    //    }
 
     public $items = null; //array of tree nodes with subnodes
 
     private $html = '';
     private $treeObject = null;
+
+    private function isFunction( $code ) {
+        $result = false;
+        preg_match_all('/^function[\s]?\(.*?\)/', mb_convert_case( $code, MB_CASE_LOWER), $matches);
+        if ( is_array( $matches ) && count( $matches ) == 1 && is_array( $matches[0] ) && count( $matches[0] ) == 1 ) {
+            $matches = [];
+            preg_match_all('/\{([^]]+)\}/',$code, $matches);
+            $result =  ( is_array( $matches ) && count( $matches ) > 0 && is_array( $matches[0] ) && count( $matches[0] ) == 1 );
+        }
+        return $result;
+    }
 
     private function buildTreeObject( $items, &$parentItem = null ) {
         if ( is_array( $items ) ) {
@@ -121,6 +136,7 @@ class TreeListWidget extends \yii\base\Widget
 
             $this->multiSelect = $multiSelect;
         }
+        $this->onItemSelect = (  isset( $this->onItemSelect ) && $this->onItemSelect !== null ? ( trim( $this->onItemSelect ) != '' ? ( $this->isFunction( $this->onItemSelect ) ? $this->onItemSelect : null ) : null ) : null );
         $this->treeObject = new \stdClass();
         $this->treeObject->id = -1;
         $this->treeObject->label = 'Root';
