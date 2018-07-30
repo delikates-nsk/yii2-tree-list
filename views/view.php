@@ -286,15 +286,15 @@ if ( $widget->multiSelect ) {
     ";
 }
 if ( $widget->expand ) {
-    $js .= "$('" . $id . " .tree-input').click();";
+    $js .= "$('" . $id . " .tree ul li .node.root i').click();";
 }
 if ( $widget->form !== null && ( $widget->form instanceof \yii\widgets\ActiveForm ) ) {
-    $js .= "$('#" . $widget->form->id . "').on('beforeValidate', function(){
-        if ( $('" . $id . " .tree-dropdown').hasClass('open') ) {
-            $('" . $id . " .tree-input').click();
-        };
-    });
-    $('#" . $widget->form->id . "').on('afterValidate', function(event, messages){
+//    $js .= "$('#" . $widget->form->id . "').on('beforeValidate', function(){
+//        if ( $('" . $id . " .tree-dropdown').hasClass('open') ) {
+//            $('" . $id . " .tree-input').click();
+//        };
+//    });
+    $js .= "$('#" . $widget->form->id . "').on('afterValidate', function(event, messages){
         if ( $('" . $id . " > .form-group .help-block').html() != '' ) {
             $('" . $id . " > label').addClass('has-error');
             $('" . $id . " .tree-input').addClass('has-error');
@@ -320,9 +320,9 @@ if ( $widget->form !== null && ( $widget->form instanceof \yii\widgets\ActiveFor
                 }
             }
         }
-        if ( !$widget->expand ) {
-            $js .= "if ( $('" . $id . " .tree-dropdown').hasClass('open') ) { $('" . $id . " .tree-input').click(); };";
-        }
+//        if ( !$widget->expand ) {
+//            $js .= "if ( $('" . $id . " .tree-dropdown').hasClass('open') ) { $('" . $id . " .tree-input').click(); };";
+//        }
     }
 }
 
