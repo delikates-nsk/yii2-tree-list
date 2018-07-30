@@ -6,7 +6,7 @@ class TreeListWidget extends \yii\base\Widget
     public $form = null; //ActiveForm
     public $model = null; //model
     public $attribute = null; //model attribute
-    public $multiSelect = 'auto'; //true, false or 'auto'
+    public $multiSelect = false; //true or false
     public $searchPanel = [ 'visible' => false,
                             'label' => '', //text before search input 
                             'placeholder' => '',  //serch input placeholder text
@@ -123,19 +123,6 @@ class TreeListWidget extends \yii\base\Widget
     public function init()
     {
         parent::init();
-        if ( !is_bool( $this->multiSelect ) ) {
-
-            $multiSelect = false;
-
-            if ( mb_convert_case( $this->multiSelect, MB_CASE_LOWER ) == 'auto'  ) {
-
-                if ( $this->form !== null && ( $this->form instanceof \yii\widgets\ActiveForm ) && $this->model !== null && $this->model[0] instanceof \yii\base\Model ) {
-                    $multiSelect = true;
-                }
-            }
-
-            $this->multiSelect = $multiSelect;
-        }
         $this->onItemSelect = (  isset( $this->onItemSelect ) && $this->onItemSelect !== null ? ( trim( $this->onItemSelect ) != '' ? ( $this->isFunction( $this->onItemSelect ) ? $this->onItemSelect : null ) : null ) : null );
         $this->treeObject = new \stdClass();
         $this->treeObject->id = -1;

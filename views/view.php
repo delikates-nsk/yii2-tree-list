@@ -286,7 +286,7 @@ if ( $widget->multiSelect ) {
     ";
 }
 if ( $widget->expand ) {
-    $js .= "$('" . $id . " .tree ul li .node.root i').click();";
+    $js .= "$('" . $id . " .tree ul li:first .node i').click();";
 }
 if ( $widget->form !== null && ( $widget->form instanceof \yii\widgets\ActiveForm ) ) {
 //    $js .= "$('#" . $widget->form->id . "').on('beforeValidate', function(){
