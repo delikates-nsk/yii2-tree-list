@@ -201,8 +201,7 @@ if ( $widget->ajax !== null && is_array( $widget->ajax ) && isset( $widget->ajax
                               \$str = '<ul'+( \$node.parent().parent().parent().children('li').length > 0 && \$node.parent().parent().index() == \$node.parent().parent().parent().children('li').length - 1 ? ' class=\"last-node\"' : '' )+'>';
                            }
                            \$str += '    <li>'+
-                                       '       <div class=\"node\">'+
-                                       '           <i class=\"fa fa-'+( typeof( data[i].items ) != 'undefined' ? 'plus' : 'minus' )+'-square-o\"></i>'+
+                                       '       <div class=\"node\">'+( typeof( data[i].items ) != 'undefined' ? '           <i class=\"fa fa-plus-square-o\"></i>' : '' )+
                                        ". ( $widget->multiSelect ? "'           <i class=\"fa fa-square-o\"></i>'+" : "" )."
                                        '           <span data-id=\"'+data[i].id+'\">'+data[i].label+'</span>'+
                                        '       </div>'+
@@ -265,7 +264,7 @@ if ( $widget->multiSelect ) {
     if ( isset( $widget->onItemSelect ) && $widget->onItemSelect !== null ) {
         $js .= "
         var \$itemSelectCallbackFunc = ".$widget->onItemSelect.";
-        \$itemSelectCallbackFunc(\$(this).next('span'));";
+        \$itemSelectCallbackFunc($(this).next('span'));";
     }
     $js .="
     });
@@ -279,8 +278,9 @@ if ( $widget->multiSelect ) {
         $(this).addClass('selected');
         $('" . $id . " .tree-input .icon .input-clear').removeClass('hide');";
     if ( isset( $widget->onItemSelect ) && $widget->onItemSelect !== null ) {
-        $js .= "var \$itemSelectCallbackFunc = ".$widget->onItemSelect.";
-                    \$itemSelectCallbackFunc(\$this);";
+        $js .= "
+        var \$itemSelectCallbackFunc = ".$widget->onItemSelect.";
+        \$itemSelectCallbackFunc($(this));";
     }
     $js .="
     });

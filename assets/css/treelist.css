@@ -1,5 +1,4 @@
 .tree-list-container {
-    position: relative;
     border: 1px solid #ccc;
     border-radius: 4px;
 }
@@ -152,6 +151,7 @@
 .tree-list-container .tree {
     overflow: auto;
     padding: 10px 5px 5px;
+    height: 100%;
 }
 
 .tree-list-container .tree ul {
