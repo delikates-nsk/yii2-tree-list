@@ -150,7 +150,6 @@
 }
 
 .tree-list-container .tree {
-    height: 190px;
     overflow: auto;
     padding: 10px 5px 5px;
 }

@@ -41,6 +41,7 @@ $attribute = $widget->attribute;
                                 <li class="parent">
                                     <div class="root node">
                                         <i class="fa fa-<?= ( count( $widget->items ) > 0 ? 'minus' : 'plus' ); ?>-square-o"></i>
+                                        <?= ( $widget->multiSelect && is_array( $widget->rootNode ) && isset( $widget->rootNode['canSelect'] ) && $widget->rootNode['canSelect'] ? "<i class=\"fa fa-square-o\"></i>" : ""  ); ?>
                                         <span><?= ( isset( $widget->rootNode['label'] ) ? $widget->rootNode['label'] : '' ); ?></span>
                                     </div>
                         <?php
@@ -119,7 +120,7 @@ $(document).ready(function() {
         } else {
             $('" . $id . " .tree-input > span').html('&nbsp;');
         }
-        $('" . $id . " .tree ul li .node:not(.root) > span.selected').removeClass('selected');
+        $('" . $id . " .tree ul li .node".(!is_array( $widget->rootNode ) || !isset( $widget->rootNode['canSelect'] ) || !$widget->rootNode['canSelect'] ? ":not(.root)" : ""  )." > span.selected').removeClass('selected');
         $('" . $id . " > .form-group input[type=hidden]:eq(0)').val('');
         $('" . $id . " .tree-input .icon .input-clear').addClass('hide');
     });
@@ -271,7 +272,7 @@ if ( $widget->multiSelect ) {
 ";
 } else {
     $js .= "});
-    $('body').on('click', '" . $id . " .tree ul li .node:not(.root) > span', function(){
+    $('body').on('click', '" . $id . " .tree ul li .node".(!is_array( $widget->rootNode ) || !isset( $widget->rootNode['canSelect'] ) || !$widget->rootNode['canSelect'] ? ":not(.root)" : ""  )." > span', function(){
         $('" . $id . " > .form-group input[type=hidden]:eq(0)').val( $(this).attr('data-id') );
         $('" . $id . " .tree-input > span').html( $(this).html() );
         $('" . $id . " .tree ul li .node:not(.root) > span').removeClass('selected');

@@ -13,7 +13,8 @@ class TreeListWidget extends \yii\base\Widget
                             'searchCaseSensivity' => false 
                           ];
     public $rootNode = [
-                          'visible' => true,  
+                          'visible' => true,
+                          'canSelect' => false,
                           'label' => 'Root' 
                        ];
 
