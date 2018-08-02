@@ -126,7 +126,6 @@ class TreeListWidget extends \yii\base\Widget
     public function init()
     {
         parent::init();
-        var_dump( $this->onItemSelect );
         $this->onItemSelect = (  isset( $this->onItemSelect ) && $this->onItemSelect !== null ? ( trim( $this->onItemSelect ) != '' ? ( $this->isFunction( $this->onItemSelect ) ? $this->onItemSelect : null ) : null ) : null );
         $this->treeObject = new \stdClass();
         $this->treeObject->id = -1;
