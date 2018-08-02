@@ -65,11 +65,14 @@ class TreeListWidget extends \yii\base\Widget
 
     private function isFunction( $code ) {
         $result = false;
+        $code = preg_replace('/[\x0A]/', '', $code);
+        $code = preg_replace('/[\x0D]/', '', $code);
         preg_match_all('/^function[\s]?\(.*?\)/', mb_convert_case( $code, MB_CASE_LOWER), $matches);
         if ( is_array( $matches ) && count( $matches ) == 1 && is_array( $matches[0] ) && count( $matches[0] ) == 1 ) {
             $matches = [];
-            preg_match_all('/\{([^]]+)\}/',$code, $matches);
+            preg_match_all('/\{(.*?)\}/',$code, $matches);
             $result =  ( is_array( $matches ) && count( $matches ) > 0 && is_array( $matches[0] ) && count( $matches[0] ) == 1 );
+            var_dump( $matches );
         }
         return $result;
     }
@@ -124,6 +127,7 @@ class TreeListWidget extends \yii\base\Widget
     public function init()
     {
         parent::init();
+        var_dump( $this->onItemSelect );
         $this->onItemSelect = (  isset( $this->onItemSelect ) && $this->onItemSelect !== null ? ( trim( $this->onItemSelect ) != '' ? ( $this->isFunction( $this->onItemSelect ) ? $this->onItemSelect : null ) : null ) : null );
         $this->treeObject = new \stdClass();
         $this->treeObject->id = -1;
