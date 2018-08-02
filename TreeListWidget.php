@@ -72,7 +72,6 @@ class TreeListWidget extends \yii\base\Widget
             $matches = [];
             preg_match_all('/\{(.*?)\}/',$code, $matches);
             $result =  ( is_array( $matches ) && count( $matches ) > 0 && is_array( $matches[0] ) && count( $matches[0] ) == 1 );
-            var_dump( $matches );
         }
         return $result;
     }
