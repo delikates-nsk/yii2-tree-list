@@ -34,44 +34,50 @@ $attribute = $widget->attribute;
             ?>
             <div class="tree">
                 <?php
-                    if ( isset( $widget->items ) && is_array( $widget->items ) ) {
-                        if ( is_array( $widget->rootNode ) && isset( $widget->rootNode['visible'] ) && $widget->rootNode['visible'] ) {
+                        if ( $widget->rootNode['visible'] ) {
                         ?>
                             <ul>
                                 <li class="parent">
                                     <div class="root node">
-                                        <i class="fa fa-<?= ( count( $widget->items ) > 0 ? 'minus' : 'plus' ); ?>-square-o"></i>
-                                        <?= ( $widget->multiSelect && is_array( $widget->rootNode ) && isset( $widget->rootNode['canSelect'] ) && $widget->rootNode['canSelect'] ? "<i class=\"fa fa-square-o\"></i>" : ""  ); ?>
-                                        <span data-id="<?= ( isset( $widget->rootNode['id'] ) ? $widget->rootNode['id'] : 'root' ); ?>"><?= ( isset( $widget->rootNode['label'] ) ? $widget->rootNode['label'] : '' ); ?></span>
+                                        <i class="fa fa-plus-square-o"></i>
+                                        <?= ( $widget->multiSelect && $widget->rootNode['canSelect'] ? "<i class=\"fa fa-square-o\"></i>" : ""  ); ?>
+                                        <span data-id="<?= $widget->rootNode['id']; ?>"><?= $widget->rootNode['label']; ?></span>
                                     </div>
                         <?php
                         }
 
                         echo $htmlData;
 
-                        if ( is_array( $widget->rootNode ) && isset( $widget->rootNode['visible'] ) && $widget->rootNode['visible'] ) {
-                        if ( is_array( $widget->rootNode ) && isset( $widget->rootNode['visible'] ) && $widget->rootNode['visible'] ) {
+                        if ( $widget->rootNode['visible'] ) {
                         ?>
                                 </li>
                             </ul>
                         <?php
                         }
-                    }
                 ?>
             </div>
-            <div class="form-control tree-input">
-                <div class="icon">
-                    <span class="input-clear fa fa-times-circle hide"></span>
-                </div>
-                <?php
-                if ( $widget->multiSelect ) {
+            <?php
+                if ( $widget->selectedItemsPanel['visible'] ) {
+                    ?>
+                    <div class="form-control tree-input">
+                        <div class="icon">
+                            <span class="input-clear fa fa-times-circle hide"></span>
+                        </div>
+                        <?php
+                        if ( $widget->multiSelect && $widget->selectedItemsPanel['showRemoveButton'] ) {
 
-                    ?><ul><li class="empty">&nbsp;</li></ul><?php
-                } else {
-                    ?><span>&nbsp;</span><?php
+                            ?>
+                            <ul>
+                                <li class="empty">&nbsp;</li>
+                            </ul><?php
+                        } else {
+                            ?><span>&nbsp;</span><?php
+                        }
+                        ?>
+                    </div>
+                    <?php
                 }
-                ?>
-            </div>
+            ?>
         </div>
         <?php
         if ( $widget->form !== null && ( $widget->form instanceof \yii\widgets\ActiveForm ) &&
@@ -147,6 +153,12 @@ if ( $widget->ajax !== null && is_array( $widget->ajax ) && isset( $widget->ajax
         ? $widget->ajax['onNodeCollapse']['method']
         : 'post'
     ), MB_CASE_UPPER);
+    if ( isset( $widget->ajax['onNodeCollapse']['before'] ) && $widget->ajax['onNodeCollapse']['before'] !== null ) {
+        $js .= "
+        var \$beforeCollapseAjaxCallbackFunc = ".$widget->ajax['onNodeCollapse']['before'].";
+        \$beforeCollapseAjaxCallbackFunc($(this));
+        ";
+    }
     $js .= "
             $.ajax({
                 type: '".$method."',
@@ -182,6 +194,13 @@ if ( $widget->ajax !== null && is_array( $widget->ajax ) && isset( $widget->ajax
                 ? $widget->ajax['onNodeExpand']['method']
                 : 'post'
               ), MB_CASE_UPPER);
+    if ( isset( $widget->ajax['onNodeExpand']['before'] ) && $widget->ajax['onNodeExpand']['before'] !== null ) {
+        $js .= "
+        var \$beforeExpandAjaxCallbackFunc = ".$widget->ajax['onNodeExpand']['before'].";
+        \$beforeExpandAjaxCallbackFunc($(this));
+        ";
+    }
+
     $js .= "
         var \$node = $(this);
         if ( \$node.parent().parent().children('ul').length == 0 ) {

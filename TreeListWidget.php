@@ -26,6 +26,9 @@ class TreeListWidget extends \yii\base\Widget
     public $ajax = null;
     //[
     //  'onNodeExpand' => [
+    //                  'before' => 'function(item) {
+    //                       console.log(item);
+    //                  }', //javascript callback function that will be runned before send ajax-request
     //                  'url' => '', URL for ajax request
     //                  'method' => 'post', //post or get
     //                  'params' => [
@@ -156,6 +159,12 @@ class TreeListWidget extends \yii\base\Widget
         $this->ajax['onNodeExpand'] = ( $this->ajax !== null && isset( $this->ajax['onNodeExpand'] ) && is_array( $this->ajax['onNodeExpand'] ) && isset( $this->ajax['onNodeExpand']['url'] ) &&  $this->ajax['onNodeExpand']['url'] != '' ?  $this->ajax['onNodeExpand'] : null);
         $this->ajax['onNodeCollapse'] = ( $this->ajax !== null && isset( $this->ajax['onNodeCollapse'] ) && is_array( $this->ajax['onNodeCollapse'] ) && isset( $this->ajax['onNodeCollapse']['url'] ) &&  $this->ajax['onNodeCollapse']['url'] != '' ?  $this->ajax : null);
         $this->ajax = ( $this->ajax['onNodeExpand'] === null && $this->ajax['onNodeCollapse'] === null ? null : $this->ajax );
+        if ( is_array( $this->ajax ) && isset( $this->ajax['onNodeExpand'] ) && is_array( $this->ajax['onNodeExpand'] ) && isset( $this->ajax['onNodeExpand']['before'] ) ) {
+            if ( !$this->isFunction( $this->ajax['onNodeExpand']['before'] ) ) { unset( $this->ajax['onNodeExpand']['before'] ); }
+        }
+        if ( is_array( $this->ajax ) && isset( $this->ajax['onNodeCollapse'] ) && is_array( $this->ajax['onNodeCollapse'] ) && isset( $this->ajax['onNodeCollapse']['before'] ) ) {
+            if ( !$this->isFunction( $this->ajax['onNodeCollapse']['before'] ) ) { unset( $this->ajax['onNodeCollapse']['before'] ); }
+        }
 
         $this->treeObject = new \stdClass();
         $this->treeObject->id = -1;
