@@ -62,7 +62,7 @@ class TreeListWidget extends \yii\base\Widget
     //       console.log( item ); //selected item object
     //    }
 
-    public $items = null; //array of tree nodes with subnodes
+    public $items = null; //array of tree nodes with subnodes see OnNodeExpand return array
 
     private $html = '';
     private $treeObject = null;
@@ -130,10 +130,33 @@ class TreeListWidget extends \yii\base\Widget
     public function init()
     {
         parent::init();
-        $this->onItemSelect = (  isset( $this->onItemSelect ) && $this->onItemSelect !== null ? ( trim( $this->onItemSelect ) != '' ? ( $this->isFunction( $this->onItemSelect ) ? $this->onItemSelect : null ) : null ) : null );
+
+        $this->rootNode = ( !isset( $this->rootNode ) || !is_array( $this->rootNode ) || count( $this->rootNode ) == 0 ? [ 'visible' => true, 'canSelect' => false, 'id' => 'root', 'label' => 'Root' ] : $this->rootNode );
+        $this->rootNode['visible'] = ( isset( $this->rootNode['visible'] ) && is_bool( $this->rootNode['visible'] ) ? $this->rootNode['visible'] : true );
+        $this->rootNode['canSelect'] = ( isset( $this->rootNode['canSelect'] ) && is_bool( $this->rootNode['canSelect'] ) ? $this->rootNode['canSelect'] : false );
+        $this->rootNode['id'] = ( isset( $this->rootNode['id'] ) && is_string( $this->rootNode['id'] ) ? $this->rootNode['id'] : 'root' );
+        $this->rootNode['label'] = ( isset( $this->rootNode['label'] ) && is_string( $this->rootNode['label'] ) ? $this->rootNode['label'] : 'Root' );
+
         $this->selectedItemsPanel = ( !isset( $this->selectedItemsPanel ) ||  !is_array( $this->selectedItemsPanel ) || ( !isset( $this->selectedItemsPanel['visible'] ) && !isset( $this->selectedItemsPanel['showRemoveButton'] ) ) ? [ 'visible' => false, 'showRemoveButton' => false ] : $this->selectedItemsPanel  );
         $this->selectedItemsPanel['visible'] = ( isset( $this->selectedItemsPanel['visible'] ) && is_bool( $this->selectedItemsPanel['visible'] ) ? $this->selectedItemsPanel['visible'] : false );
         $this->selectedItemsPanel['showRemoveButton'] = ( isset( $this->selectedItemsPanel['showRemoveButton'] ) && is_bool( $this->selectedItemsPanel['showRemoveButton'] ) ? $this->selectedItemsPanel['showRemoveButton'] : false );
+
+        $this->searchPanel = ( !isset( $this->searchPanel ) ||  !is_array( $this->searchPanel ) || count( $this->searchPanel ) == 0 ? [ 'visible' => false, 'label' => '', 'placeholder' => '', 'searchCaseSensivity' => false ] : $this->searchPanel  );
+        $this->searchPanel['visible'] = ( isset( $this->searchPanel['visible'] ) && is_bool( $this->searchPanel['visible'] ) ? $this->searchPanel['visible'] : false );
+        $this->searchPanel['label'] = ( isset( $this->searchPanel['label'] ) && is_string( $this->searchPanel['label'] ) ? $this->searchPanel['label'] : '' );
+        $this->searchPanel['placeholder'] = ( isset( $this->searchPanel['placeholder'] ) && is_string( $this->searchPanel['placeholder'] ) ? $this->searchPanel['placeholder'] : '' );
+        $this->searchPanel['searchCaseSensivity'] = ( isset( $this->searchPanel['searchCaseSensivity'] ) && is_bool( $this->searchPanel['searchCaseSensivity'] ) ? $this->searchPanel['searchCaseSensivity'] : false );
+
+        $this->multiSelect = ( isset( $this->multiSelect ) && is_bool( $this->multiSelect ) ? $this->multiSelect : false );
+        $this->expand = ( isset( $this->expand ) && is_bool( $this->expand ) ? $this->expand : false );
+        $this->onItemSelect = (  isset( $this->onItemSelect ) && $this->onItemSelect !== null ? ( trim( $this->onItemSelect ) != '' ? ( $this->isFunction( $this->onItemSelect ) ? $this->onItemSelect : null ) : null ) : null );
+
+        $this->items = ( !isset( $this->items ) || !is_array( $this->items ) ? null : $this->items );
+        $this->ajax = ( !isset( $this->ajax ) || !is_array( $this->ajax ) || count( $this->ajax ) == 0 ? null : $this->ajax );
+        $this->ajax['onNodeExpand'] = ( $this->ajax !== null && isset( $this->ajax['onNodeExpand'] ) && is_array( $this->ajax['onNodeExpand'] ) && isset( $this->ajax['onNodeExpand']['url'] ) &&  $this->ajax['onNodeExpand']['url'] != '' ?  $this->ajax['onNodeExpand'] : null);
+        $this->ajax['onNodeCollapse'] = ( $this->ajax !== null && isset( $this->ajax['onNodeCollapse'] ) && is_array( $this->ajax['onNodeCollapse'] ) && isset( $this->ajax['onNodeCollapse']['url'] ) &&  $this->ajax['onNodeCollapse']['url'] != '' ?  $this->ajax : null);
+        $this->ajax = ( $this->ajax['onNodeExpand'] === null && $this->ajax['onNodeCollapse'] === null ? null : $this->ajax );
+
         $this->treeObject = new \stdClass();
         $this->treeObject->id = -1;
         $this->treeObject->label = 'Root';
