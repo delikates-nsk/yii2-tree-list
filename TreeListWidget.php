@@ -12,9 +12,13 @@ class TreeListWidget extends \yii\base\Widget
                             'placeholder' => '',  //serch input placeholder text
                             'searchCaseSensivity' => false 
                           ];
+    public $selectedItemsPanel = [ 'visible' => false,
+                                   'showRemoveButton' => false
+                                 ];
     public $rootNode = [
                           'visible' => true,
                           'canSelect' => false,
+                          'id' => 'root',
                           'label' => 'Root' 
                        ];
 
@@ -127,6 +131,9 @@ class TreeListWidget extends \yii\base\Widget
     {
         parent::init();
         $this->onItemSelect = (  isset( $this->onItemSelect ) && $this->onItemSelect !== null ? ( trim( $this->onItemSelect ) != '' ? ( $this->isFunction( $this->onItemSelect ) ? $this->onItemSelect : null ) : null ) : null );
+        $this->selectedItemsPanel = ( !isset( $this->selectedItemsPanel ) ||  !is_array( $this->selectedItemsPanel ) || ( !isset( $this->selectedItemsPanel['visible'] ) && !isset( $this->selectedItemsPanel['showRemoveButton'] ) ) ? [ 'visible' => false, 'showRemoveButton' => false ] : $this->selectedItemsPanel  );
+        $this->selectedItemsPanel['visible'] = ( isset( $this->selectedItemsPanel['visible'] ) && is_bool( $this->selectedItemsPanel['visible'] ) ? $this->selectedItemsPanel['visible'] : false );
+        $this->selectedItemsPanel['showRemoveButton'] = ( isset( $this->selectedItemsPanel['showRemoveButton'] ) && is_bool( $this->selectedItemsPanel['showRemoveButton'] ) ? $this->selectedItemsPanel['showRemoveButton'] : false );
         $this->treeObject = new \stdClass();
         $this->treeObject->id = -1;
         $this->treeObject->label = 'Root';

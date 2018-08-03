@@ -42,13 +42,14 @@ $attribute = $widget->attribute;
                                     <div class="root node">
                                         <i class="fa fa-<?= ( count( $widget->items ) > 0 ? 'minus' : 'plus' ); ?>-square-o"></i>
                                         <?= ( $widget->multiSelect && is_array( $widget->rootNode ) && isset( $widget->rootNode['canSelect'] ) && $widget->rootNode['canSelect'] ? "<i class=\"fa fa-square-o\"></i>" : ""  ); ?>
-                                        <span><?= ( isset( $widget->rootNode['label'] ) ? $widget->rootNode['label'] : '' ); ?></span>
+                                        <span data-id="<?= ( isset( $widget->rootNode['id'] ) ? $widget->rootNode['id'] : 'root' ); ?>"><?= ( isset( $widget->rootNode['label'] ) ? $widget->rootNode['label'] : '' ); ?></span>
                                     </div>
                         <?php
                         }
 
                         echo $htmlData;
 
+                        if ( is_array( $widget->rootNode ) && isset( $widget->rootNode['visible'] ) && $widget->rootNode['visible'] ) {
                         if ( is_array( $widget->rootNode ) && isset( $widget->rootNode['visible'] ) && $widget->rootNode['visible'] ) {
                         ?>
                                 </li>
@@ -290,11 +291,6 @@ if ( $widget->expand ) {
     $js .= "$('" . $id . " .tree ul li:first .node i').click();";
 }
 if ( $widget->form !== null && ( $widget->form instanceof \yii\widgets\ActiveForm ) ) {
-//    $js .= "$('#" . $widget->form->id . "').on('beforeValidate', function(){
-//        if ( $('" . $id . " .tree-dropdown').hasClass('open') ) {
-//            $('" . $id . " .tree-input').click();
-//        };
-//    });
     $js .= "$('#" . $widget->form->id . "').on('afterValidate', function(event, messages){
         if ( $('" . $id . " > .form-group .help-block').html() != '' ) {
             $('" . $id . " > label').addClass('has-error');
@@ -321,9 +317,6 @@ if ( $widget->form !== null && ( $widget->form instanceof \yii\widgets\ActiveFor
                 }
             }
         }
-//        if ( !$widget->expand ) {
-//            $js .= "if ( $('" . $id . " .tree-dropdown').hasClass('open') ) { $('" . $id . " .tree-input').click(); };";
-//        }
     }
 }
 
